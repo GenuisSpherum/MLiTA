@@ -1,6 +1,12 @@
 package com.calc.internal;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Arrays;
+
 public class DeterminantCalculator {
+    private static final Map<String, Double> memory = new HashMap<>();
+
     public static double findDeterminant(double[][] matrix) {
         int n = matrix.length;
 
@@ -12,15 +18,20 @@ public class DeterminantCalculator {
             return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
         }
 
-        double determinant = 0;
-        for (int col = 0; col < n; col++) {
-            determinant += Math.pow(-1, col) * matrix[0][col] * findDeterminant(minor(matrix, 0, col));
+        String key = matrixToString(matrix);
+        if (memory.containsKey(key)) {
+            return memory.get(key);
         }
 
+        double determinant = 0;
+        for (int col = 0; col < n; col++) {
+            determinant += (long) (Math.pow(-1, col) * matrix[0][col] * findDeterminant(minor(matrix, 0, col)));
+        }
+
+        memory.put(key, determinant);
         return determinant;
     }
 
-    // считаем минор
     private static double[][] minor(double[][] matrix, int row, int col) {
         int n = matrix.length;
         double[][] minor = new double[n - 1][n - 1];
@@ -38,7 +49,10 @@ public class DeterminantCalculator {
             }
             minorRow++;
         }
-
         return minor;
+    }
+
+    private static String matrixToString(double[][] matrix) {
+        return Arrays.deepToString(matrix);
     }
 }

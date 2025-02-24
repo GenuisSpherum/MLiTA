@@ -55,6 +55,14 @@ public class JTableUtils {
         }
     };
 
+    private static double parseLong(String s) throws NumberFormatException {
+        try {
+            return defaultNumberFormat.parse(s).longValue();
+        } catch (ParseException e) {
+            throw new NumberFormatException(e.getMessage());
+        }
+    };
+
 
     private static <T extends JComponent> T setFixedSize(T comp, int width, int height) {
         Dimension d = new Dimension(width, height);
@@ -664,11 +672,23 @@ public class JTableUtils {
     public static double[][] readDoubleMatrixFromJTable(JTable table) throws ParseException {
         try {
             Double[][] matrix = readMatrixFromJTable(table, Double.class, JTableUtils::parseDouble, false, 0.0);
-            return (double[][]) Arrays.stream(matrix).map(ArrayUtils::toPrimitive).toArray((n) -> new double[n][]);
+            return Arrays.stream(matrix).map(ArrayUtils::toPrimitive).toArray((n) -> new double[n][]);
         } catch (JTableUtilsException impossible) {
         }
         return null;
     }
+
+//    /**
+//     * Чтение данных из JTable в двухмерный массив Integer[][]
+//     */
+//    public static long[][] readLongMatrixFromJTable(JTable table) throws ParseException {
+//        try {
+//            Long[][] matrix = readMatrixFromJTable(table, Long.class, JTableUtils::parseLong, false, 0);
+//            return Arrays.stream(matrix).map(ArrayUtils::toPrimitive).toArray((n) -> new long[n][]);
+//        } catch (JTableUtilsException impossible) {
+//        }
+//        return null;
+//    }
 
     /**
      * Чтение данных из JTable в одномерный массив Integer[]

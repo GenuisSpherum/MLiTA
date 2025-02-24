@@ -13,6 +13,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.math.BigDecimal;
 
 public class FrameMain extends JFrame {
     private JPanel panelMain;
