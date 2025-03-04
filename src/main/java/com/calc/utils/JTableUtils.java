@@ -222,7 +222,7 @@ public class JTableUtils {
                     minusButton.setName(table.getName() + "-minusColumnButton");
                     minusButton.addActionListener((ActionEvent evt) -> {
                         tableModel.setColumnCount(tableModel.getColumnCount() > 0 ? tableModel.getColumnCount() - 1 : 0);
-                        tableModel.setRowCount(tableModel.getRowCount() > 0 ? tableModel.getRowCount() - 1 : 0);
+//                        tableModel.setRowCount(tableModel.getRowCount() > 0 ? tableModel.getRowCount() - 1 : 0);
                         recalcJTableSize(table);
                     });
                     topPanel.add(minusButton);
@@ -232,7 +232,7 @@ public class JTableUtils {
                     plusButton.setName(table.getName() + "-plusColumnButton");
                     plusButton.addActionListener((ActionEvent evt) -> {
                         tableModel.addColumn(String.format("[%d]", tableModel.getColumnCount()));
-                        tableModel.addRow(new String[]{});
+//                        tableModel.addRow(new String[]{});
                         recalcJTableSize(table);
                     });
                     topPanel.add(plusButton);
@@ -676,6 +676,33 @@ public class JTableUtils {
         } catch (JTableUtilsException impossible) {
         }
         return null;
+    }
+
+    public static Object[] readMatrixAndVectorFromJTable(JTable table) throws ParseException {
+        double[][] fullMatrix = readDoubleMatrixFromJTable(table);
+
+        if (fullMatrix == null || fullMatrix.length == 0) {
+            throw new IllegalArgumentException("Матрица пуста!");
+        }
+
+        int rowCount = fullMatrix.length;
+        int colCount = fullMatrix[0].length;
+
+        if (rowCount + 1 != colCount) {  // Должно быть (n x n+1), иначе ошибка
+            throw new IllegalArgumentException("Матрица должна быть задана как (n x n+1), где последний столбец — это B!");
+        }
+
+        // Создаём квадратную матрицу A (n x n)
+        double[][] A = new double[rowCount][rowCount];
+        // Вектор B (n x 1)
+        double[] B = new double[rowCount];
+
+        for (int i = 0; i < rowCount; i++) {
+            System.arraycopy(fullMatrix[i], 0, A[i], 0, rowCount);
+            B[i] = fullMatrix[i][rowCount];  // Последний столбец
+        }
+
+        return new Object[]{A, B};
     }
 
 //    /**

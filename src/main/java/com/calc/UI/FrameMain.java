@@ -1,6 +1,7 @@
 package com.calc.UI;
 
 import com.calc.internal.DeterminantCalculator;
+import com.calc.internal.KramerCalculator;
 import com.calc.utils.ArrayUtils;
 import com.calc.utils.JTableUtils;
 import com.calc.utils.SwingUtils;
@@ -14,6 +15,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.Arrays;
+
+import static com.calc.utils.JTableUtils.readMatrixAndVectorFromJTable;
 
 public class FrameMain extends JFrame {
     private JPanel panelMain;
@@ -24,6 +28,7 @@ public class FrameMain extends JFrame {
     private JButton buttonFindDeterminant;
     private JTable tableOutput;
     private JTextArea textArea1;
+    private JButton buttonKramerButton;
 
     private JFileChooser fileChooserOpen;
     private JFileChooser fileChooserSave;
@@ -127,6 +132,19 @@ public class FrameMain extends JFrame {
                 double[][] matrix = JTableUtils.readDoubleMatrixFromJTable(tableInput);
                 double answer = DeterminantCalculator.findDeterminant(matrix);
                 textArea1.setText(String.valueOf(answer));
+            } catch (Exception e) {
+                SwingUtils.showErrorMessageBox(e);
+            }
+        });
+
+        buttonKramerButton.addActionListener(actionEvent -> {
+            try {
+                Object[] matrices = readMatrixAndVectorFromJTable(tableInput);
+                double[][] A = (double[][]) matrices[0];
+                double[] B = (double[]) matrices[1];
+
+                double[] answer = KramerCalculator.solveCramer(A, B);
+                textArea1.setText(Arrays.toString(answer));
             } catch (Exception e) {
                 SwingUtils.showErrorMessageBox(e);
             }
