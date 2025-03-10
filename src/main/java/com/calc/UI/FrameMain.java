@@ -1,6 +1,8 @@
 package com.calc.UI;
 
-import com.calc.internal.DeterminantCalculator;
+import com.calc.internal.DefaultDeterminantCalculator;
+import com.calc.internal.DiagonalDeterminantCalculator;
+import com.calc.internal.GaussSolver;
 import com.calc.internal.KramerCalculator;
 import com.calc.utils.ArrayUtils;
 import com.calc.utils.JTableUtils;
@@ -14,7 +16,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.Arrays;
 
 import static com.calc.utils.JTableUtils.readMatrixAndVectorFromJTable;
@@ -29,6 +30,8 @@ public class FrameMain extends JFrame {
     private JTable tableOutput;
     private JTextArea textArea1;
     private JButton buttonKramerButton;
+    private JButton buttonDiagonalMatrix;
+    private JButton buttonGaussSolver;
 
     private JFileChooser fileChooserOpen;
     private JFileChooser fileChooserSave;
@@ -130,7 +133,17 @@ public class FrameMain extends JFrame {
         buttonFindDeterminant.addActionListener(actionEvent -> {
             try {
                 double[][] matrix = JTableUtils.readDoubleMatrixFromJTable(tableInput);
-                double answer = DeterminantCalculator.findDeterminant(matrix);
+                double answer = DefaultDeterminantCalculator.findDeterminant(matrix);
+                textArea1.setText(String.valueOf(answer));
+            } catch (Exception e) {
+                SwingUtils.showErrorMessageBox(e);
+            }
+        });
+
+        buttonDiagonalMatrix.addActionListener(actionEvent -> {
+            try {
+                double[][] matrix = JTableUtils.readDoubleMatrixFromJTable(tableInput);
+                double answer = DiagonalDeterminantCalculator.findDeterminant(matrix);
                 textArea1.setText(String.valueOf(answer));
             } catch (Exception e) {
                 SwingUtils.showErrorMessageBox(e);
@@ -144,6 +157,19 @@ public class FrameMain extends JFrame {
                 double[] B = (double[]) matrices[1];
 
                 double[] answer = KramerCalculator.solveCramer(A, B);
+                textArea1.setText(Arrays.toString(answer));
+            } catch (Exception e) {
+                SwingUtils.showErrorMessageBox(e);
+            }
+        });
+
+        buttonGaussSolver.addActionListener(actionEvent -> {
+            try {
+                Object[] matrices = readMatrixAndVectorFromJTable(tableInput);
+                double[][] A = (double[][]) matrices[0];
+                double[] B = (double[]) matrices[1];
+
+                double[] answer = GaussSolver.solveGauss(A, B);
                 textArea1.setText(Arrays.toString(answer));
             } catch (Exception e) {
                 SwingUtils.showErrorMessageBox(e);

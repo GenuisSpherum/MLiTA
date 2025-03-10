@@ -5,8 +5,8 @@ import java.util.Arrays;
 public class KramerCalculator {
     public static double[] solveCramer(double[][] mainMatrix, double[] replacer) {
         int n = mainMatrix.length;
-        double detA = DeterminantCalculator.findDeterminant(mainMatrix);
-        if (detA == 0) throw new IllegalArgumentException("Определитель матрицы равен нулю => решений много");
+        double detA = DefaultDeterminantCalculator.findDeterminant(mainMatrix);
+        if (detA == 0) throw new IllegalArgumentException("Определитель матрицы равен нулю => решений нет");
 
         double[] result = new double[n];
         for (int i = 0; i < n; i++) {
@@ -16,7 +16,7 @@ public class KramerCalculator {
             for (int j = 0; j < n; j++) {
                 Ai[j][i] = replacer[j];
             }
-            result[i] = DeterminantCalculator.findDeterminant(Ai) / detA;
+            result[i] = DefaultDeterminantCalculator.findDeterminant(Ai) / detA;
         }
         return result;
     }

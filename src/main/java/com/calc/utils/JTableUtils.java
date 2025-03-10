@@ -682,7 +682,7 @@ public class JTableUtils {
         double[][] fullMatrix = readDoubleMatrixFromJTable(table);
 
         if (fullMatrix == null || fullMatrix.length == 0) {
-            throw new IllegalArgumentException("Матрица пуста!");
+            throw new IllegalArgumentException("Матрица пустая");
         }
 
         int rowCount = fullMatrix.length;

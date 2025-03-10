@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 
-public class DeterminantCalculator {
+public class DefaultDeterminantCalculator {
     private static final Map<String, Double> memory = new HashMap<>();
 
     public static double findDeterminant(double[][] matrix) {
