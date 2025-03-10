@@ -688,21 +688,19 @@ public class JTableUtils {
         int rowCount = fullMatrix.length;
         int colCount = fullMatrix[0].length;
 
-        if (rowCount + 1 != colCount) {  // Должно быть (n x n+1), иначе ошибка
-            throw new IllegalArgumentException("Матрица должна быть задана как (n x n+1), где последний столбец — это B!");
+        if (rowCount + 1 != colCount) {
+            throw new IllegalArgumentException("Матрица должна быть (n x n+1), где последний столбец — это replacer!");
         }
 
-        // Создаём квадратную матрицу A (n x n)
-        double[][] A = new double[rowCount][rowCount];
-        // Вектор B (n x 1)
-        double[] B = new double[rowCount];
+        double[][] mainMatrix = new double[rowCount][rowCount];
+        double[] replacer = new double[rowCount];
 
         for (int i = 0; i < rowCount; i++) {
-            System.arraycopy(fullMatrix[i], 0, A[i], 0, rowCount);
-            B[i] = fullMatrix[i][rowCount];  // Последний столбец
+            System.arraycopy(fullMatrix[i], 0, mainMatrix[i], 0, rowCount);
+            replacer[i] = fullMatrix[i][rowCount];  // последний столбец
         }
 
-        return new Object[]{A, B};
+        return new Object[]{mainMatrix, replacer};
     }
 
 //    /**
