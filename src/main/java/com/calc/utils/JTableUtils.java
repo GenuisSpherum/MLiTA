@@ -678,6 +678,16 @@ public class JTableUtils {
         return null;
     }
 
+    public static void writeMatrixAndVectorToJTable(JTable table, double[][] A, double[] B) {
+        int n = A.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                table.setValueAt(A[i][j], i, j);
+            }
+            table.setValueAt(B[i], i, n); // последний столбец
+        }
+    }
+
     public static Object[] readMatrixAndVectorFromJTable(JTable table) throws ParseException {
         double[][] fullMatrix = readDoubleMatrixFromJTable(table);
 

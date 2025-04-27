@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import static com.calc.utils.JTableUtils.readMatrixAndVectorFromJTable;
+import static com.calc.utils.JTableUtils.writeMatrixAndVectorToJTable;
 
 public class FrameMain extends JFrame {
     private JPanel panelMain;
@@ -169,8 +170,20 @@ public class FrameMain extends JFrame {
                 double[][] A = (double[][]) matrices[0];
                 double[] B = (double[]) matrices[1];
 
-                double[] answer = GaussSolver.solveGauss(A, B);
-                textArea1.setText(Arrays.toString(answer));
+                Object solution = GaussSolver.solveGauss(A, B);
+
+                writeMatrixAndVectorToJTable(tableInput, A, B);
+
+                if (solution instanceof double[]) {
+                    textArea1.setText("Единственное решение:\n" + Arrays.toString((double[]) solution));
+                } else if (solution instanceof String[]) {
+                    StringBuilder sb = new StringBuilder("Бесконечно много решений:\n");
+                    String[] expressions = (String[]) solution;
+                    for (int i = 0; i < expressions.length; i++) {
+                        sb.append("x").append(i + 1).append(" = ").append(expressions[i]).append("\n");
+                    }
+                    textArea1.setText(sb.toString());
+                }
             } catch (Exception e) {
                 SwingUtils.showErrorMessageBox(e);
             }
