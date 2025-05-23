@@ -678,6 +678,15 @@ public class JTableUtils {
         return null;
     }
 
+    public static void writeMatrixToJTable(JTable table, double[][] A) {
+        int n = A.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                table.setValueAt(A[i][j], i, j);
+            }
+        }
+    }
+
     public static void writeMatrixAndVectorToJTable(JTable table, double[][] A, double[] B) {
         int n = A.length;
         for (int i = 0; i < n; i++) {

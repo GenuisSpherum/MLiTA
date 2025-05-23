@@ -32,7 +32,7 @@ public class DefaultDeterminantCalculator {
         return determinant;
     }
 
-    private static double[][] minor(double[][] matrix, int row, int col) {
+    public static double[][] minor(double[][] matrix, int row, int col) {
         int n = matrix.length;
         double[][] minor = new double[n - 1][n - 1];
 

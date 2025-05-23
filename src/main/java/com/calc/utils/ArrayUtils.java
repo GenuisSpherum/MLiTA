@@ -604,6 +604,6 @@ public class ArrayUtils {
      * @see #createRandomIntMatrix(int, int, int, int)
      */
     public static int[][] createRandomIntMatrix(int rowCount, int colCount, int maxValue) {
-        return createRandomIntMatrix(rowCount, colCount, -10, maxValue);
+        return createRandomIntMatrix(rowCount, colCount, 0, maxValue);
     }
 }

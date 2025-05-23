@@ -1,9 +1,6 @@
 package com.calc.UI;
 
-import com.calc.internal.DefaultDeterminantCalculator;
-import com.calc.internal.DiagonalDeterminantCalculator;
-import com.calc.internal.GaussSolver;
-import com.calc.internal.KramerCalculator;
+import com.calc.internal.*;
 import com.calc.utils.ArrayUtils;
 import com.calc.utils.JTableUtils;
 import com.calc.utils.SwingUtils;
@@ -18,8 +15,8 @@ import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
 
-import static com.calc.utils.JTableUtils.readMatrixAndVectorFromJTable;
-import static com.calc.utils.JTableUtils.writeMatrixAndVectorToJTable;
+import static com.calc.internal.MultiplyMatrix.multiply;
+import static com.calc.utils.JTableUtils.*;
 
 public class FrameMain extends JFrame {
     private JPanel panelMain;
@@ -33,6 +30,11 @@ public class FrameMain extends JFrame {
     private JButton buttonKramerButton;
     private JButton buttonDiagonalMatrix;
     private JButton buttonGaussSolver;
+    private JButton reverseMatrixButton;
+    private JTable table1;
+    private JTable table2;
+    private JButton multiplyMatrixes;
+    private JButton buttonLoadInputFromFile1;
 
     private JFileChooser fileChooserOpen;
     private JFileChooser fileChooserSave;
@@ -46,8 +48,17 @@ public class FrameMain extends JFrame {
         this.pack();
 
         JTableUtils.initJTableForArray(tableInput, 40, true, true, true, true);
+        JTableUtils.initJTableForArray(table1, 40, true, true, true, true);
+        JTableUtils.initJTableForArray(table2, 40, true, true, true, true);
         JTableUtils.initJTableForArray(tableOutput, 40, true, true, true, true);
+        // если чо - убрать ---
+        table2.setAutoResizeMode(4);
+        tableInput.setAutoResizeMode(4);
+        table1.setAutoResizeMode(4);
+        // --------
         tableInput.setRowHeight(25);
+        table1.setRowHeight(25);
+        table2.setRowHeight(25);
         tableOutput.setRowHeight(25);
 
         fileChooserOpen = new JFileChooser();
@@ -85,6 +96,17 @@ public class FrameMain extends JFrame {
                 if (fileChooserOpen.showOpenDialog(panelMain) == JFileChooser.APPROVE_OPTION) {
                     int[][] arr = ArrayUtils.readIntArray2FromFile(fileChooserOpen.getSelectedFile().getPath());
                     JTableUtils.writeArrayToJTable(tableInput, arr);
+                }
+            } catch (Exception e) {
+                SwingUtils.showErrorMessageBox(e);
+            }
+        });
+
+        buttonLoadInputFromFile1.addActionListener(actionEvent -> {
+            try {
+                if (fileChooserOpen.showOpenDialog(panelMain) == JFileChooser.APPROVE_OPTION) {
+                    int[][] arr = ArrayUtils.readIntArray2FromFile(fileChooserOpen.getSelectedFile().getPath());
+                    JTableUtils.writeArrayToJTable(table2, arr);
                 }
             } catch (Exception e) {
                 SwingUtils.showErrorMessageBox(e);
@@ -144,8 +166,13 @@ public class FrameMain extends JFrame {
         buttonDiagonalMatrix.addActionListener(actionEvent -> {
             try {
                 double[][] matrix = JTableUtils.readDoubleMatrixFromJTable(tableInput);
-                double answer = DiagonalDeterminantCalculator.findDeterminant(matrix);
-                textArea1.setText(String.valueOf(answer));
+                Object[] result = DiagonalDeterminantCalculator.findDeterminant(matrix);
+
+                double[][] upperTriangleMatrix = (double[][]) result[0];
+                double determinant = (double) result[1];
+
+                JTableUtils.writeArrayToJTable(tableInput, upperTriangleMatrix);
+                textArea1.setText("Определитель: " + determinant);
             } catch (Exception e) {
                 SwingUtils.showErrorMessageBox(e);
             }
@@ -186,6 +213,47 @@ public class FrameMain extends JFrame {
                 }
             } catch (Exception e) {
                 SwingUtils.showErrorMessageBox(e);
+            }
+        });
+
+        reverseMatrixButton.addActionListener(actionEvent -> {
+            try {
+                double[][] matrix = JTableUtils.readDoubleMatrixFromJTable(tableInput);
+                double[][] inverse = MatrixInverter.inverseMatrix(matrix);
+                // Записываем с округлением до 3 знаков после запятой
+                JTableUtils.writeArrayToJTable(table2, inverse);
+                // Обновляем размеры таблицы
+                JTableUtils.resizeJTable(table2, inverse.length, inverse[0].length);
+            } catch (ArithmeticException ex) {
+                JOptionPane.showMessageDialog(null, "Ошибка: " + ex.getMessage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        multiplyMatrixes.addActionListener(actionEvent -> {
+            try {
+                // Считываем матрицы из tableInput и table2
+                double[][] matrixA = JTableUtils.readDoubleMatrixFromJTable(tableInput);
+                double[][] matrixB = JTableUtils.readDoubleMatrixFromJTable(table2);
+
+                // Проверка на возможность умножения (кол-во столбцов A == кол-ву строк B)
+                if (matrixA[0].length != matrixB.length) {
+                    JOptionPane.showMessageDialog(this,
+                            "Нельзя умножить матрицы: число столбцов первой матрицы не равно числу строк второй.",
+                            "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Умножение матриц
+                double[][] result = multiply(matrixA, matrixB);
+
+                // Вывод результата в table1 с округлением до 3 знаков
+                JTableUtils.writeArrayToJTable(table1, result, "%.1f");
+                JTableUtils.resizeJTable(table1, result.length, result[0].length);
+
+            } catch (Exception ex) {
+                SwingUtils.showErrorMessageBox(ex);
             }
         });
     }
